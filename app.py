@@ -38,14 +38,11 @@ def add_user():
     password = input("Enter the new user's password: ")
     role = input("Enter the new user's role (user/manager/super-admin): ").lower()
 
-    # Validate the role
     if role not in ["user", "manager", "super-admin"]:
         print("Invalid role. Please enter one of the following: user, manager, super-admin.")
         return
 
-    # Optionally hash the password in the future, for now we just store it as is.
-    # Later, you can replace this logic with bcrypt hashing when ready.
-    hashed_password = password  # Placeholder for bcrypt hashing
+    hashed_password = password
 
     conn = sqlite3.connect("competency_tracking.db")
     cursor = conn.cursor()
