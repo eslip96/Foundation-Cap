@@ -298,7 +298,7 @@ def manage_team(role):
         print("2. Add a New User")
         print("3. Grade a User")
         print("4. Search User by Name")
-        print("5. Delete User Grade")  # Added option for deleting a grade
+        print("5. Delete User Grade")
         print("6. Export Competency Report")
         print("7. Back to Menu")
 
