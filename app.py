@@ -269,6 +269,31 @@ def display_all_users_and_grades():
     conn.close()
 
 
+def view_user_competencies(user_email):
+    conn = sqlite3.connect("competency_tracking.db")
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT competencies.name, assessments.score
+        FROM users
+        JOIN assessments ON users.id = assessments.user_id
+        JOIN competencies ON assessments.assessment_id = competencies.id
+        WHERE users.email = ?
+    """, (user_email,))
+
+    competencies = cursor.fetchall()
+
+    if competencies:
+        print("\nYour Competencies and Grades:")
+        for competency in competencies:
+            name, score = competency
+            print(f"Competency: {name}, Grade: {score}")
+    else:
+        print("No grade assigned.")
+
+    conn.close()
+
+
 def delete_user_grade(user_email):
     conn = sqlite3.connect("competency_tracking.db")
     cursor = conn.cursor()
@@ -323,25 +348,17 @@ def manage_team(role):
             print("Invalid option. Please try again.")
 
 
-def display_menu(role):
-    if role == "user":
-        print("\nUser Menu:")
-        print("1. View Competencies")
-        print("2. Log Out")
-    elif role == "manager":
-        print("\nManager Menu:")
-        print("1. View Competencies")
+def display_menu(role, email):
+    print("\nMenu:")
+    print("1. View Competencies")
+    if role == "manager" or role == "super-admin":
         print("2. Manage Team")
-        print("3. Add a New User")
-        print("4. Grade a User")
-        print("5. Delete grade ")
-        print("5. Log Out")
-    elif role == "super-admin":
-        print("\nSuper Admin Menu:")
-        print("1. View Competencies")
-        print("2. Manage Users")
-        print("3. Manage Projects")
-        print("4. Log Out")
+    print("3. log out")
+
+    choice = input("\nChoose an option: ")
+
+    if choice == "1":
+        view_user_competencies(email)
 
 
 def main():
@@ -358,26 +375,15 @@ def main():
             print(f"\nLogin successful! Welcome, {role.capitalize()}.")
 
             while True:
-                display_menu(role)
+                display_menu(role, email)
                 choice = input("\nChoose an option: ")
 
                 if choice == "1":
                     print("\nView Competencies")
-                    if role == "manager":
-                        display_all_users_and_grades()
                 elif choice == "2":
-                    if role == "user":
-                        print("\nYou have been logged out.")
-                        break
-                    elif role == "manager":
+                    if role == "manager" or role == "super-admin":
                         manage_team(role)
                 elif choice == "3":
-                    if role == "manager":
-                        add_user()
-                elif choice == "4":
-                    if role == "super-admin":
-                        grade_user()
-                elif choice == "5":
                     print("\nYou have been logged out.")
                     break
                 else:
